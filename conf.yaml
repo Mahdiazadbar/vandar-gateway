@@ -1,0 +1,3 @@
+server:
+  host: "vandagateway.local"
+  port: 8080
