@@ -1,9 +1,11 @@
 package vandar
 
 type paymentRequest struct {
-	Amount       int    `json:"amount"`
-	MobileNumber string `json:"mobile"`
-	Description  string `json:"description"`
+	Amount          int    `json:"amount"`
+	MobileNumber    string `json:"mobile"`
+	Description     string `json:"description"`
+	NationalCode    string `json:"national_code"`
+	ValidCardNumber string `json:"valid_card_number"`
 }
 
 type vandarPaymentRequest struct {

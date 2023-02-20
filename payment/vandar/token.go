@@ -9,14 +9,16 @@ import (
 
 var persianMobileValidatorRegexp = regexp.MustCompile("^((\\+98|0)9\\d{9})$")
 
-func getVandarToken(amount int, mobile, description string) (*PaymentResponse, error) {
+func getVandarToken(amount int, mobile, nationalCode, validCardNumber, description string) (*PaymentResponse, error) {
 
 	var request = vandarPaymentRequest{
-		ApiKey:       ApiKey,
-		CallBackURL:  CallbackUrl,
-		Amount:       amount,
-		MobileNumber: mobile,
-		Description:  description,
+		ApiKey:          ApiKey,
+		CallBackURL:     CallbackUrl,
+		Amount:          amount,
+		MobileNumber:    mobile,
+		NationalCode:    nationalCode,
+		ValidCardNumber: validCardNumber,
+		Description:     description,
 	}
 	postBody, _ := json.Marshal(request)
 
@@ -63,7 +65,17 @@ func GetToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	paymentResponse, err := getVandarToken(request.Amount, request.MobileNumber, request.Description)
+	if request.ValidCardNumber != "" && len(request.ValidCardNumber) != 16 {
+		http.Error(w, "Valid Card Number  is invalid", 422)
+		return
+	}
+
+	if request.NationalCode != "" && len(request.NationalCode) != 10 {
+		http.Error(w, "National Code  is invalid", 422)
+		return
+	}
+
+	paymentResponse, err := getVandarToken(request.Amount, request.MobileNumber, request.NationalCode, request.ValidCardNumber, request.Description)
 	jData, err := json.Marshal(paymentResponse)
 
 	w.Write(jData)
